@@ -1,0 +1,32 @@
+import java.util.*;
+
+public class AplicacionSeguridad {
+    public static void main(String[] args) {
+        Scanner lector = new Scanner(System.in);
+        List<Thread> procesos = new ArrayList<>();
+
+        System.out.println("Ingrese las claves a verificar (escriba 'salir' para finalizar):");
+
+        while (true) {
+            System.out.print("Clave: ");
+            String entrada = lector.nextLine();
+
+            if (entrada.equalsIgnoreCase("salir")) break;
+
+            Thread hilo = new Thread(new RevisadorClave(entrada));
+            hilo.start();
+            procesos.add(hilo);
+        }
+
+        procesos.forEach(h -> {
+            try {
+                h.join();
+            } catch (InterruptedException e) {
+                System.out.println("Error al finalizar hilo: " + e.getMessage());
+            }
+        });
+
+        System.out.println("Proceso completo.");
+        lector.close();
+    }
+}
